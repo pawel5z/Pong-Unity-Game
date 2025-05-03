@@ -1,27 +1,44 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ScreenShaker : MonoBehaviour
 {
-    public float shakeIntensity;
-    private Vector3 defaultCamPos;
+    public float ShakeIntensity;
+    private float _noisePeriodDiv = .1f;
+    private Vector3 _defaultCamPos;
+
+    private Coroutine _shakeCoroutine;
+
+    public void StartShake(float time)
+    {
+        if (_shakeCoroutine != null)
+        {
+            StopCoroutine(_shakeCoroutine);
+        }
+
+        _shakeCoroutine = StartCoroutine(Shake(time));
+    }
 
     private void Start()
     {
-        defaultCamPos = transform.position;
+        _defaultCamPos = transform.position;
     }
 
-    public IEnumerator Shake(float time)
+    private IEnumerator Shake(float time)
     {
         while (time > 0)
         {
-            Vector3 tempPos = defaultCamPos + (Random.insideUnitSphere * shakeIntensity);
-            transform.position = new Vector3(tempPos.x, tempPos.y, defaultCamPos.z);
+            var offset = new Vector2(
+                Mathf.Lerp(-1, 1, Mathf.PerlinNoise1D(Time.realtimeSinceStartup / _noisePeriodDiv)),
+                Mathf.Lerp(-1, 1, Mathf.PerlinNoise1D((Time.realtimeSinceStartup + 17) / _noisePeriodDiv))
+            ) * ShakeIntensity;
+            Vector3 tempPos = _defaultCamPos + new Vector3(offset.x, offset.y, 0);
+            transform.position = new Vector3(tempPos.x, tempPos.y, _defaultCamPos.z);
             time -= Time.deltaTime;
             yield return null;
         }
-        transform.position = defaultCamPos;
+        transform.position = _defaultCamPos;
         yield return null;
     }
 }

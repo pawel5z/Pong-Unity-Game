@@ -661,7 +661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c3ab50d768d8b44c8f6e5203732a076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeIntensity: 0.5
+  ShakeIntensity: 0.5
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
